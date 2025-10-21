@@ -1,8 +1,8 @@
 # Personal Portfolio Website - Mohamed Hamdan
 
-[![Portfolio Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=for-the-badge)](https://github.com/Hamdan2045/Your-Repo-Name)
+[![Portfolio Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=for-the-badge)](https://github.com/Hamdan2045/Portfolio)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-[![GitHub Pages Deploy](https://img.shields.io/github/deployments/Hamdan2045/Your-Repo-Name/production?label=WEBSITE&style=for-the-badge)](https://Hamdan2045.github.io/Your-Repo-Name/)
+[![GitHub Pages Deploy](https://img.shields.io/github/deployments/Hamdan2045/Portfolio/production?label=WEBSITE&style=for-the-badge)](https://Hamdan2045.github.io/Portfolio/)
 
 A fully responsive personal portfolio website built with modern HTML, CSS, and JavaScript, featuring interactive animations, a project gallery, and a working contact form.
 
@@ -47,8 +47,8 @@ To run this project locally:
 
 1.  **Clone the repository:**
     ```sh
-    git clone [https://github.com/Hamdan2045/Your-Repo-Name.git](https://github.com/Hamdan2045/Your-Repo-Name.git)
-    cd Your-Repo-Name
+    git clone [https://github.com/Hamdan2045/Your-Repo-Name.git](https://github.com/Hamdan2045/Portfolio.git)
+cd Portfolio
     ```
 
 2.  **Run with a Live Server:**
@@ -66,6 +66,6 @@ This site is automatically deployed to **GitHub Pages**. Any push to the `main` 
 
 ## 📧 Contact
 
-**Hamdan **
+**Hamdan**
 * **Email:** `mohamedhamdan20.work@gmail.com`
-* **LinkedIn:** `www.linkedin.com/in/mohamed-hamdan-2b5116298`
+* **LinkedIn:** [Mohamed Hamdan](https://www.linkedin.com/in/mohamed-hamdan-2b5116298)
