@@ -1,0 +1,225 @@
+/* ======================================= */
+/* ALL KEYFRAME ANIMATIONS        */
+/* ======================================= */
+
+@keyframes glow {
+  0%, 50% { 
+    text-shadow: 0 0 15px #ff7700, 0 0 30px #ff5500, 0 0 45px #ff3300; 
+  }
+  100% { 
+    text-shadow: 0 0 20px #008b8b, 0 0 40px #00ffaa, 0 0 60px #00ffaa; 
+  }
+}
+
+@keyframes pulse {
+  0%, 45% {  
+    box-shadow: 0 0 30px #ff7700, 0 0 60px #ff5500, 0 0 90px #ff3300;
+  }
+  50% {  
+    box-shadow: 0 0 15px #ff7700, 0 0 30px #ff5500, 0 0 45px #ff3300;
+  }
+  55% {  
+    box-shadow: 0 0 40px #ff7700, 0 0 80px #ff5500, 0 0 120px #ff3300;
+  }
+  100% {  
+    box-shadow: 0 0 30px #00ffaa, 0 0 60px #00d4aa, 0 0 90px #008b8b;
+  }
+}
+
+/* --- Aurora Keyframes --- */
+@keyframes aurora-1 {
+  0% { top: 0; right: 0; }
+  50% { top: 100%; right: 75%; }
+  75% { top: 100%; right: 25%; }
+  100% { top: 0; right: 0; }
+}
+@keyframes aurora-2 {
+  0% { top: -50%; left: 0%; }
+  60% { top: 100%; left: 75%; }
+  85% { top: 100%; left: 25%; }
+  100% { top: -50%; left: 0%; }
+}
+@keyframes aurora-3 {
+  0% { bottom: 0; left: 0; }
+  40% { bottom: 100%; left: 75%; }
+  65% { bottom: 40%; left: 50%; }
+  100% { bottom: 0; left: 0; }
+}
+@keyframes aurora-4 {
+  0% { bottom: -50%; right: 0; }
+  50% { bottom: 0%; right: 40%; }
+  90% { bottom: 50%; right: 25%; }
+  100% { bottom: -50%; right: 0; }
+}
+@keyframes aurora-border {
+  0% { border-radius: 37% 29% 27% 27% / 28% 25% 41% 37%; }
+  25% { border-radius: 47% 29% 39% 49% / 61% 19% 66% 26%; }
+  50% { border-radius: 57% 23% 47% 72% / 63% 17% 66% 33%; }
+  75% { border-radius: 28% 49% 29% 100% / 93% 20% 64% 25%; }
+  100% { border-radius: 37% 29% 27% 27% / 28% 25% 41% 37%; }
+}
+
+/* --- Skill Card Sheen --- */
+@keyframes skillCardSheen{
+  to { transform: translateX(30%) skewX(-8deg); opacity: 0; }
+}
+
+/* --- Carousel Sheen --- */
+@keyframes sheen{
+  to{ transform: translateX(120%); }
+}
+
+/* --- Contact Form Reveal --- */
+@keyframes contactIn{
+  from{ opacity:0; transform: translateY(28px); filter: blur(6px); }
+  to{   opacity:1; transform:none;             filter: blur(0); }
+}
+@keyframes contactSweep{
+  to{ transform: translateX(120%); opacity:0; }
+}
+
+
+/* ======================================= */
+/* REVEAL ANIMATION CLASSES       */
+/* ======================================= */
+
+@media (prefers-reduced-motion: no-preference){
+
+  /* ---------- Base Reveal (for Timeline, Skills, etc.) ---------- */
+  .reveal{
+    opacity: 0;
+    transform: translateY(60px);
+    filter: blur(10px);
+    transition:
+      opacity 1500ms cubic-bezier(.16,.84,.18,1),
+      transform 1500ms cubic-bezier(.16,.84,.18,1),
+      filter 1500ms ease;
+    transition-delay: var(--delay, 0ms);
+    will-change: opacity, transform, filter;
+  }
+  .reveal.show{
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+
+  @keyframes cardOut{
+    from{ opacity:1; transform: translateY(0) scale(1);   filter: blur(0); }
+    to  { opacity:0; transform: translateY(16px) scale(.985); filter: blur(8px); }
+  }
+  .reveal.leaving{
+    animation: cardOut 900ms cubic-bezier(.22,.61,.36,1) forwards;
+  }
+
+  /* Sweep animation for .reveal cards */
+  @keyframes sweepOutside{
+    0%   { transform: translateX(-25%); opacity: .9; }
+    100% { transform: translateX(25%);  opacity: 0;  }
+  }
+  
+  .reveal.entering::after,
+  .description-text.reveal-about.entering::after {
+    content: "";
+    position: absolute;
+    top: -10%; bottom: -10%; left: -35%;
+    width: 170%;
+    pointer-events: none;
+    background: linear-gradient(120deg,
+      rgba(255,255,255,0) 35%,
+      rgba(255,255,255,.12) 50%,
+      rgba(255,255,255,0) 65%);
+    mix-blend-mode: screen;
+    transform: translateX(-25%);
+    animation: sweepOutside 900ms ease 220ms both;
+  }
+
+
+  /* ---------- About Section Paragraph ---------- */
+  .description-text.reveal-about{
+    position: relative; /* host sweep */
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(28px);
+    filter: blur(6px);
+    transition:
+      opacity 900ms cubic-bezier(.16,.84,.18,1),
+      transform 900ms cubic-bezier(.16,.84,.18,1),
+      filter 900ms ease;
+    transition-delay: var(--about-para-delay, 0ms);
+    will-change: opacity, transform, filter;
+  }
+  .description-text.reveal-about.show{
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+
+  @keyframes aboutOut{
+    from{ opacity:1; transform: translateY(0);   filter: blur(0); }
+    to  { opacity:0; transform: translateY(14px); filter: blur(6px); }
+  }
+  .description-text.reveal-about.leaving{
+    animation: aboutOut 900ms cubic-bezier(.22,.61,.36,1) forwards;
+  }
+
+  /* ---------- About Section Button ---------- */
+  .resume-btn.reveal-btn{
+    opacity: 0;
+    transform: translateY(36px) scale(.98);
+    filter: saturate(88%);
+    transition:
+      opacity 900ms cubic-bezier(.16,.84,.18,1),
+      transform 900ms cubic-bezier(.16,.84,.18,1),
+      filter 900ms ease,
+      box-shadow 900ms ease;
+    transition-delay: var(--about-btn-delay, 160ms);
+    will-change: opacity, transform, filter;
+  }
+  .resume-btn.reveal-btn.show{
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: saturate(100%);
+    animation: btnHalo 3200ms ease-in-out 600ms infinite alternate;
+  }
+  @keyframes btnHalo{
+    from{ box-shadow: 0 12px 28px rgba(255,145,77,.16), 0 0 0 0 rgba(255,145,77,.14); }
+    to  { box-shadow: 0 16px 36px rgba(255,145,77,.26), 0 0 0 4px rgba(255,145,77,.06); }
+  }
+
+  @keyframes btnOut{
+    from{ opacity:1; transform: translateY(0) scale(1);   filter: saturate(100%); box-shadow: 0 12px 28px rgba(255,145,77,.16); }
+    to  { opacity:0; transform: translateY(18px) scale(.98); filter: saturate(88%);  box-shadow: 0 0 0 rgba(0,0,0,0); }
+  }
+  .resume-btn.reveal-btn.leaving{
+    animation: btnOut 900ms cubic-bezier(.22,.61,.36,1) forwards;
+  }
+
+  /* ---------- Contact Card Reveal ---------- */
+  .contact-card{
+    opacity:0; transform: translateY(28px); filter: blur(6px);
+  }
+  .contact-card.reveal-show{
+    animation: contactIn 1100ms cubic-bezier(.16,.84,.18,1) forwards;
+  }
+  .contact-card.reveal-show::before{
+    content:""; position:absolute; inset:-6px;
+    background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.08) 50%, rgba(255,255,255,0) 100%);
+    mix-blend-mode: screen; transform: translateX(-120%);
+    animation: contactSweep 900ms ease 300ms both;
+    pointer-events:none;
+  }
+}
+
+/* Reduced motion fallback */
+@media (prefers-reduced-motion: reduce){
+  .reveal,
+  .description-text.reveal-about,
+  .resume-btn.reveal-btn,
+  .contact-card {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
