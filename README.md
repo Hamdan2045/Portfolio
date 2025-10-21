@@ -45,10 +45,10 @@ The site is fully modular, using modern CSS for layout and ES6 JavaScript module
 
 To run this project locally:
 
-1.  **Clone the repository:**
+1.1.  **Clone the repository:**
     ```sh
-    git clone [https://github.com/Hamdan2045/Your-Repo-Name.git](https://github.com/Hamdan2045/Portfolio.git)
-cd Portfolio
+    git clone [https://github.com/Hamdan2045/Portfolio.git](https://github.com/Hamdan2045/Portfolio.git)
+    cd Portfolio
     ```
 
 2.  **Run with a Live Server:**
