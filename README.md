@@ -2,7 +2,7 @@
 
 [![Portfolio Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=for-the-badge)](https://github.com/Hamdan2045/Portfolio)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-[![GitHub Pages Deploy](https://img.shields.io/github/deployments/Hamdan2045/Portfolio/production?label=WEBSITE&style=for-the-badge)](https://Hamdan2045.github.io/Portfolio/)
+[![GitHub Pages Deploy](https://img.shields.io/github/deployments/Hamdan2045/Portfolio/production?label=WEBSITE&style=for-the-badge)](https://portfolio-inky-nine-mftogct27j.vercel.app/)
 
 A fully responsive personal portfolio website built with modern HTML, CSS, and JavaScript, featuring interactive animations, a project gallery, and a working contact form.
 
