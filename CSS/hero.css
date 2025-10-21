@@ -1,0 +1,139 @@
+/* --- Hero Section: Description & Orb --- */
+.description-container {
+    text-align: left;
+    color: white;
+    max-width: 600px;
+    margin-left: 100px;
+    margin-top: 165px;
+}
+.name-text {
+    font-size: 3.0rem;
+    font-weight: bold;
+    color: #fff;
+}
+.description-text {
+    font-size: 1.2rem;
+    color: #ccc;
+    margin-top: 30px;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: left;
+  gap: 30px;
+}
+.icon {
+  fill: #008080;
+  width: 30px;
+  height: 50px;
+  transition: transform 0.3s ease;
+}
+.icon:hover {
+  transform: scale(1.2);
+  fill: #FF7F00;
+}
+
+.contact-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #FF7F00, #FFFFFF);
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.2s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+.contact-btn:hover {
+    background: linear-gradient(135deg, #008080, #FFFFFF);
+    transform: scale(1.05);
+}
+
+.orb-container {
+    position: absolute;
+    top: 180px;
+    left: 72%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.orb {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, #ff7700, #aa4400);
+    border-radius: 50%;
+    box-shadow: 0 0 30px #ff7700, 0 0 60px #ff5500, 0 0 90px #ff3300;
+    animation: pulse 2s infinite alternate;
+}
+.text-container {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px #ff7700, 0 0 20px #ff5500, 0 0 30px #ff3300;
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+    transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+    text-align: center;
+    width: 250px;
+    margin-top: 10px;
+}
+.text-container.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* --- Aurora Background Effect --- */
+.title {
+    font-size: clamp(1rem, 5vw, 4rem);
+    font-weight: 800;
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+    margin: 0;
+}
+.aurora {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Place it behind content */
+    mix-blend-mode: darken;
+    pointer-events: none;
+}
+.aurora__item {
+    overflow: hidden;
+    position: absolute;
+    width: 60vw;
+    height: 60vw;
+    background-color:#ff6600;
+    border-radius: 37% 29% 27% 27% / 28% 25% 41% 37%;
+    filter: blur(1rem);
+    mix-blend-mode: overlay;
+}
+.aurora__item:nth-of-type(1) {
+    top: -50%;
+    animation: aurora-border 6s ease-in-out infinite, aurora-1 12s ease-in-out infinite alternate;
+}
+.aurora__item:nth-of-type(2) {
+    background-color: #ff9900;
+    right: 0;
+    top: 0;
+    animation: aurora-border 6s ease-in-out infinite, aurora-2 12s ease-in-out infinite alternate;
+}
+.aurora__item:nth-of-type(3) {
+    background-color: #ffcc00;
+    left: 0;
+    bottom: 0;
+    animation: aurora-border 6s ease-in-out infinite, aurora-3 8s ease-in-out infinite alternate;
+}
+.aurora__item:nth-of-type(4) {
+    background-color: #ff3300; 
+    right: 0;
+    bottom: -50%;
+    animation: aurora-border 6s ease-in-out infinite, aurora-4 24s ease-in-out infinite alternate;
+}

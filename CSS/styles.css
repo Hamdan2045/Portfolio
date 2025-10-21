@@ -1,0 +1,55 @@
+/* --- IMPORT ALL MODULES --- */
+@import url('animation.css');
+@import url('navbar.css');
+@import url('hero.css');
+@import url('about.css');
+@import url('timeline.css');
+@import url('skills.css');
+@import url('portfolio.css');
+@import url('contact.css');
+@import url('footer.css');
+@import url('responsiveness.css');
+
+/* --- GLOBAL STYLES & VARIABLES --- */
+:root{
+  --nav-bg: #111;
+  --teal: #00a096;      /* link default */
+  --orange: #ff914d;   /* hover/active */
+    
+  /* Skill Variables */
+  --sk-teal:   #00a096;
+  --sk-orange: #ff7f00;
+  --sk-card:   #111;
+  --sk-track1: rgba(255,255,255,.06);
+  --sk-track2: rgba(0,0,0,.35);
+  --sk-radius: 12px;
+    
+  /* Portfolio & Contact Variables */
+  --panel:#0f0f0f;
+  --glass: rgba(18,18,18,.55);
+}
+
+body {
+  background-color: black;
+  padding-top: 80px; /* Adjust based on navbar height */
+}
+
+body.light-mode {
+  background: #ffffff;
+  color: #000000;
+}
+
+p {
+  color: white;
+}
+
+section {
+  scroll-margin-top: 200px; /* Adjust based on your navbar height */
+}
+
+/* General Section Title Styling */
+.section-title{
+  font-size: 3.5rem;
+  color: #008080;
+  margin: 200px 0 150px;
+}
