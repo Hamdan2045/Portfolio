@@ -1,235 +1,329 @@
 export function initPortfolio() {
-  /* ---- Carousel ---- */
+
+  /* ================================================================
+     1. OUTER CAROUSEL (slides between projects)
+     ================================================================ */
   const root = document.querySelector('.proj-carousel');
   if (!root) return;
 
-  const track = root.querySelector('.car-track');
-  const slides = Array.from(root.querySelectorAll('.car-slide'));
-  const prevBtn = root.querySelector('.car-btn.prev');
-  const nextBtn = root.querySelector('.car-btn.next');
+  const track    = root.querySelector('.car-track');
+  const slides   = Array.from(root.querySelectorAll('.car-slide'));
+  const prevBtn  = root.querySelector('.car-btn.prev');
+  const nextBtn  = root.querySelector('.car-btn.next');
   const dotsWrap = root.querySelector('.car-dots');
   const viewport = root.querySelector('.car-viewport');
 
-  // Check if carousel is buildable
-  if (!slides.length || !viewport || !track) {
-    console.warn("Carousel missing essential elements (slides, viewport, or track).");
-  } else {
-    
-    // Build dots (only if not already built)
-    if (dotsWrap.children.length === 0) { 
+  if (slides.length && viewport && track) {
+
+    if (dotsWrap.children.length === 0) {
       slides.forEach((_, i) => {
         const dot = document.createElement('button');
         dot.className = 'car-dot' + (i === 0 ? ' active' : '');
-        dot.setAttribute('aria-label', `Go to slide ${i+1}`);
+        dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
         dotsWrap.appendChild(dot);
       });
     }
-    
-    const dots = Array.from(dotsWrap.children);
-    const getSlideW = () => viewport.clientWidth;
-    let index = 0;
-    let slideW = getSlideW();
 
-    function markActive() { slides.forEach((s, i) => s.classList.toggle('is-active', i === index)); }
+    const dots = Array.from(dotsWrap.children);
+    let index = 0;
+    const getW = () => viewport.clientWidth;
+
+    function markActive() {
+      slides.forEach((s, i) => s.classList.toggle('is-active', i === index));
+    }
 
     function update() {
-      const maxShift = Math.max(0, track.scrollWidth - slideW);
-      const desired = index * slideW;
-      const tx = Math.min(desired, maxShift);
+      const tx = index * getW();
       track.style.transform = `translateX(${-tx}px)`;
       dots.forEach((d, i) => d.classList.toggle('active', i === index));
       markActive();
     }
-    
+
     function goTo(i) { index = (i + slides.length) % slides.length; update(); }
-    function onResize() { slideW = getSlideW(); update(); }
-    
-    window.addEventListener('resize', onResize);
-    
-    // --- THIS IS THE FIX ---
-    // Add button listeners (if buttons exist)
-    if (prevBtn) {
-      prevBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); goTo(index - 1); });
-    }
-    if (nextBtn) {
-      nextBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); goTo(index + 1); });
-    }
-    // --- END FIX ---
 
-    dots.forEach((d, i) => d.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); goTo(i); }));
+    window.addEventListener('resize', update);
+    prevBtn && prevBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); goTo(index - 1); });
+    nextBtn && nextBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); goTo(index + 1); });
+    dots.forEach((d, i) => d.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); goTo(i); }));
 
-    let timer = null;
-    function startAuto() { stopAuto(); timer = setInterval(() => goTo(index + 1), 1800); }
-    function stopAuto() { if (timer) clearInterval(timer); timer = null; }
-    root.addEventListener('mouseenter', stopAuto);
-    root.addEventListener('mouseleave', startAuto);
-    document.addEventListener('visibilitychange', () => document.hidden ? stopAuto() : startAuto());
+    let outerTimer = null;
+    const startOuter = () => { stopOuter(); outerTimer = setInterval(() => goTo(index + 1), 4000); };
+    const stopOuter  = () => { if (outerTimer) clearInterval(outerTimer); outerTimer = null; };
+    root.addEventListener('mouseenter', stopOuter);
+    root.addEventListener('mouseleave', startOuter);
+    document.addEventListener('visibilitychange', () => document.hidden ? stopOuter() : startOuter());
 
-    onResize(); update(); startAuto();
+    update(); markActive(); startOuter();
   }
 
-  /* ---- Glass Modal with Gallery ---- */
+  /* ================================================================
+     2. CARD THUMBNAIL MINI-SLIDESHOWS
+        Each project card cycles through its gallery images in place
+     ================================================================ */
+  slides.forEach(slide => {
+    const card = slide.querySelector('.project-card');
+    if (!card) return;
+
+    const galleryStr = card.dataset.gallery || '';
+    const images = galleryStr.split('||').map(s => s.trim()).filter(Boolean);
+    if (!images.length) return;
+
+    const thumb = card.querySelector('.project-thumb');
+    if (!thumb) return;
+
+    // Build image elements inside the thumb
+    const wrap = document.createElement('div');
+    wrap.className = 'thumb-slides';
+
+    images.forEach((src, i) => {
+      const img = document.createElement('img');
+      img.className = 'thumb-slide-img' + (i === 0 ? ' active' : '');
+      img.src = src;
+      img.alt = '';
+      img.loading = 'lazy';
+      wrap.appendChild(img);
+    });
+
+    // Insert behind overlay
+    thumb.insertBefore(wrap, thumb.firstChild);
+
+    // Progress bar
+    const prog = document.createElement('div');
+    prog.className = 'thumb-progress';
+    const fill = document.createElement('div');
+    fill.className = 'thumb-progress-fill';
+    prog.appendChild(fill);
+    thumb.appendChild(prog);
+
+    const imgs = Array.from(wrap.querySelectorAll('.thumb-slide-img'));
+    let ti = 0;
+
+    function advanceThumb() {
+      imgs[ti].classList.remove('active');
+      ti = (ti + 1) % imgs.length;
+      imgs[ti].classList.add('active');
+      fill.style.width = ((ti + 1) / imgs.length * 100) + '%';
+    }
+
+    fill.style.width = (1 / imgs.length * 100) + '%';
+
+    let cardTimer = null;
+    const startCard = () => { stopCard(); cardTimer = setInterval(advanceThumb, 1800); };
+    const stopCard  = () => { if (cardTimer) clearInterval(cardTimer); cardTimer = null; };
+
+    // Auto-start on active slide, stop on inactive
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => e.isIntersecting ? startCard() : stopCard());
+    }, { threshold: 0.3 });
+    observer.observe(card);
+
+    card.addEventListener('mouseenter', stopCard);
+    card.addEventListener('mouseleave', startCard);
+  });
+
+  /* ================================================================
+     3. GLASS MODAL with BIG auto-sliding image carousel
+     ================================================================ */
   const modal = document.getElementById('projectGlassModal');
   if (!modal) return;
 
-  const pgmBackdrop = modal.querySelector('.pgm-backdrop');
-  const closeBtn = modal.querySelector('.pgm-close');
-  const elImg = modal.querySelector('#pgmImg');
-  const elNoImg = modal.querySelector('.pgm-noimg');
-  const elTitle = modal.querySelector('#pgmTitle');
-  const elDesc = modal.querySelector('#pgmDesc');
-  const elTech = modal.querySelector('#pgmTech');
-  const elFeat = modal.querySelector('#pgmFeat');
-  const elDemo = modal.querySelector('#pgmDemo');
-  const elCode = modal.querySelector('#pgmCode');
-  const navPrev = modal.querySelector('.pgm-mnav.prev');
-  const navNext = modal.querySelector('.pgm-mnav.next');
-  const thumbs = modal.querySelector('#pgmThumbs');
+  const backdrop  = modal.querySelector('.pgm-backdrop');
+  const closeBtn  = modal.querySelector('.pgm-close');
+  const elTitle   = modal.querySelector('#pgmTitle');
+  const elDesc    = modal.querySelector('#pgmDesc');
+  const elTech    = modal.querySelector('#pgmTech');
+  const elFeat    = modal.querySelector('#pgmFeat');
+  const elDemo    = modal.querySelector('#pgmDemo');
+  const elCode    = modal.querySelector('#pgmCode');
+  const navPrev   = modal.querySelector('.pgm-mnav.prev');
+  const navNext   = modal.querySelector('.pgm-mnav.next');
+  const thumbsEl  = modal.querySelector('#pgmThumbs');
   const mediaPane = modal.querySelector('.pgm-media');
+  const noImg     = modal.querySelector('.pgm-noimg');
+  const counter   = modal.querySelector('.pgm-counter');
+  const dotsPane  = modal.querySelector('.pgm-img-dots');
 
-  let gallery = []; 
-  let gIndex = 0;
-  let gTimer = null; 
+  // We'll build the image slides dynamically
+  let imgWrap = modal.querySelector('.pgm-img-wrap');
+  if (!imgWrap) {
+    imgWrap = document.createElement('div');
+    imgWrap.className = 'pgm-img-wrap';
+    mediaPane.insertBefore(imgWrap, mediaPane.firstChild);
+  }
 
-  function renderMedia() {
+  let gallery = [];
+  let gIdx    = 0;
+  let gTimer  = null;
+
+  function stopGAuto()  { if (gTimer) clearInterval(gTimer); gTimer = null; }
+  function startGAuto() { stopGAuto(); if (gallery.length > 1) gTimer = setInterval(gNext, 3200); }
+
+  function gNext() { if (!gallery.length) return; gGo((gIdx + 1) % gallery.length); }
+  function gPrev() { if (!gallery.length) return; gGo((gIdx - 1 + gallery.length) % gallery.length); }
+
+  function gGo(i) {
+    if (!gallery.length) return;
+    gIdx = i;
+    renderGallery();
+  }
+
+  function renderGallery() {
+    // Clear old slides
+    imgWrap.innerHTML = '';
+
     if (!gallery.length) {
-      elImg.removeAttribute('src'); elImg.style.display = 'none'; elNoImg.style.display = 'grid';
-      navPrev.hidden = navNext.hidden = true; thumbs.innerHTML = ''; return;
+      noImg && noImg.classList.add('visible');
+      navPrev.hidden = navNext.hidden = true;
+      thumbsEl.innerHTML = '';
+      counter && (counter.textContent = '');
+      dotsPane && (dotsPane.innerHTML = '');
+      return;
     }
-    elNoImg.style.display = 'none'; elImg.style.display = 'block'; elImg.src = gallery[gIndex];
 
+    noImg && noImg.classList.remove('visible');
     const multi = gallery.length > 1;
     navPrev.hidden = navNext.hidden = !multi;
 
-    thumbs.innerHTML = '';
+    // Build image slides
     gallery.forEach((src, i) => {
-      const t = document.createElement('button');
-      t.className = 'pgm-thumb' + (i === gIndex ? ' active' : '');
-      const img = document.createElement('img'); img.src = src; img.alt = '';
-      t.appendChild(img);
-      t.addEventListener('click', () => { gIndex = i; renderMedia(); });
-      thumbs.appendChild(t);
+      const div = document.createElement('div');
+      div.className = 'pgm-img-slide' + (i === gIdx ? ' active' : '');
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = '';
+      img.loading = i === 0 ? 'eager' : 'lazy';
+      div.appendChild(img);
+      imgWrap.appendChild(div);
     });
-  }
 
-  function stopGalleryAuto() {
-    if (gTimer) clearInterval(gTimer);
-    gTimer = null;
-  }
-  
-  function next() { 
-    if (!gallery.length) return; 
-    gIndex = (gIndex + 1) % gallery.length; 
-    renderMedia(); 
-  }
+    // Counter
+    if (counter) counter.textContent = `${gIdx + 1} / ${gallery.length}`;
 
-  function startGalleryAuto() {
-    stopGalleryAuto();
-    if (gallery.length > 1) { 
-      gTimer = setInterval(next, 3000); // 3 seconds per slide
+    // Dots (show up to 11 dots)
+    if (dotsPane) {
+      dotsPane.innerHTML = '';
+      if (multi && gallery.length <= 15) {
+        gallery.forEach((_, i) => {
+          const dot = document.createElement('button');
+          dot.className = 'pgm-img-dot' + (i === gIdx ? ' active' : '');
+          dot.setAttribute('aria-label', `Image ${i + 1}`);
+          dot.addEventListener('click', () => { gGo(i); stopGAuto(); });
+          dotsPane.appendChild(dot);
+        });
+      }
+    }
+
+    // Thumbnails
+    thumbsEl.innerHTML = '';
+    if (multi) {
+      gallery.forEach((src, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'pgm-thumb' + (i === gIdx ? ' active' : '');
+        const img = document.createElement('img');
+        img.src = src; img.alt = '';
+        btn.appendChild(img);
+        btn.addEventListener('click', () => { gGo(i); stopGAuto(); });
+        thumbsEl.appendChild(btn);
+      });
+      // Scroll active thumb into view
+      setTimeout(() => {
+        const active = thumbsEl.querySelector('.pgm-thumb.active');
+        if (active) active.scrollIntoView({ inline: 'center', behavior: 'smooth', block: 'nearest' });
+      }, 50);
     }
   }
 
-  function prev() { 
-    if (!gallery.length) return; 
-    gIndex = (gIndex - 1 + gallery.length) % gallery.length; 
-    renderMedia(); 
-  }
+  navPrev.addEventListener('click', () => { gPrev(); stopGAuto(); });
+  navNext.addEventListener('click', () => { gNext(); stopGAuto(); });
 
-  navPrev.addEventListener('click', prev);
-  navNext.addEventListener('click', next);
+  // Pause on hover
+  mediaPane.addEventListener('mouseenter', stopGAuto);
+  mediaPane.addEventListener('mouseleave', startGAuto);
 
-  mediaPane.addEventListener('mouseenter', stopGalleryAuto);
-  mediaPane.addEventListener('mouseleave', startGalleryAuto);
-
-  let startX = null, startY = null, moving = false;
-  mediaPane.addEventListener('pointerdown', (e) => { 
-    stopGalleryAuto();
-    startX = e.clientX; 
-    startY = e.clientY; 
-    moving = true; 
-    mediaPane.setPointerCapture(e.pointerId); 
+  // Swipe support
+  let sx = null, sy = null, dragging = false;
+  mediaPane.addEventListener('pointerdown', e => {
+    stopGAuto(); sx = e.clientX; sy = e.clientY; dragging = true;
+    mediaPane.setPointerCapture(e.pointerId);
   });
-  mediaPane.addEventListener('pointermove', (e) => {
-    if (!moving || startX == null) return;
-    const dx = e.clientX - startX, dy = e.clientY - startY;
-    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) { 
-      dx > 0 ? prev() : next(); 
-      moving = false; 
-      startX = startY = null; 
+  mediaPane.addEventListener('pointermove', e => {
+    if (!dragging || sx == null) return;
+    const dx = e.clientX - sx, dy = e.clientY - sy;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      dx > 0 ? gPrev() : gNext();
+      dragging = false; sx = sy = null;
     }
   });
-  mediaPane.addEventListener('pointerup', () => { 
-    moving = false; 
-    startX = startY = null; 
-    startGalleryAuto();
-  });
-  mediaPane.addEventListener('pointercancel', () => { 
-    moving = false; 
-    startX = startY = null; 
-    startGalleryAuto();
-  });
+  mediaPane.addEventListener('pointerup',     () => { dragging = false; sx = sy = null; startGAuto(); });
+  mediaPane.addEventListener('pointercancel', () => { dragging = false; sx = sy = null; startGAuto(); });
 
+  /* --- Open modal from card click --- */
   function openFromCard(card) {
-    const title = card.dataset.title || 'Project';
-    const desc = card.dataset.desc || 'Details coming soon.';
-    const techs = (card.dataset.tech || '').split(';').map(s => s.trim()).filter(Boolean);
-    const feats = (card.dataset.features || card.dataset.feat || '').split('||').map(s => s.trim()).filter(Boolean);
-    const gal = (card.dataset.gallery || '').split('||').map(s => s.trim()).filter(Boolean);
-    const img = card.dataset.img || '';
+    const title  = card.dataset.title    || 'Project';
+    const desc   = card.dataset.desc     || '';
+    const techs  = (card.dataset.tech    || '').split(';').map(s => s.trim()).filter(Boolean);
+    const feats  = (card.dataset.features || card.dataset.feat || '').split('||').map(s => s.trim()).filter(Boolean);
+    const gal    = (card.dataset.gallery || '').split('||').map(s => s.trim()).filter(Boolean);
+    const demo   = card.dataset.demo     || '';
+    const code   = card.dataset.code     || '';
 
     elTitle.textContent = title;
-    elDesc.textContent = desc;
+    elDesc.textContent  = desc;
 
     elTech.innerHTML = '';
     techs.forEach(t => {
       const chip = document.createElement('span');
-      chip.className = 'pgm-chip';
-      chip.textContent = t;
+      chip.className = 'pgm-chip'; chip.textContent = t;
       elTech.appendChild(chip);
     });
 
     elFeat.innerHTML = '';
-    feats.forEach(f => { const li = document.createElement('li'); li.textContent = f; elFeat.appendChild(li); });
+    feats.forEach(f => {
+      const li = document.createElement('li'); li.textContent = f;
+      elFeat.appendChild(li);
+    });
 
-    gallery = gal.length ? gal : (img ? [img] : []);
-    gIndex = 0; renderMedia();
+    gallery = gal; gIdx = 0;
+    renderGallery();
+    startGAuto();
 
-    const demo = card.dataset.demo || '';
-    const code = card.dataset.code || '';
+    // Demo button
     elDemo.textContent = 'Live Demo';
+    elDemo.classList.remove('pgm-btn--gh');
     if (demo) { elDemo.href = demo; elDemo.removeAttribute('aria-disabled'); }
-    else { elDemo.removeAttribute('href'); elDemo.setAttribute('aria-disabled', 'true'); }
+    else       { elDemo.removeAttribute('href'); elDemo.setAttribute('aria-disabled', 'true'); }
 
+    // GitHub button
     elCode.textContent = 'GitHub';
     elCode.classList.add('pgm-btn--gh');
     if (code) { elCode.href = code; elCode.removeAttribute('aria-disabled'); }
-    else { elCode.removeAttribute('href'); elCode.setAttribute('aria-disabled', 'true'); }
+    else       { elCode.removeAttribute('href'); elCode.setAttribute('aria-disabled', 'true'); }
 
     modal.hidden = false;
-    setTimeout(() => closeBtn.focus(), 0);
-
-    startGalleryAuto(); 
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => closeBtn.focus(), 50);
   }
 
-  function closeGlass() { 
-    stopGalleryAuto();
-    modal.hidden = true; 
+  function closeModal() {
+    stopGAuto();
+    modal.hidden = true;
+    document.body.style.overflow = '';
   }
 
-  root.addEventListener('click', (e) => {
+  // Open on card click (ignore carousel nav clicks)
+  root.addEventListener('click', e => {
     if (e.target.closest('.car-btn') || e.target.closest('.car-dot')) return;
     const card = e.target.closest('.project-card');
     if (card) { e.preventDefault(); openFromCard(card); }
   });
 
-  pgmBackdrop && pgmBackdrop.addEventListener('click', closeGlass);
-  closeBtn && closeBtn.addEventListener('click', closeGlass);
-  document.addEventListener('keydown', (e) => {
+  backdrop  && backdrop.addEventListener('click', closeModal);
+  closeBtn  && closeBtn.addEventListener('click', closeModal);
+  document.addEventListener('keydown', e => {
     if (!modal.hidden) {
-      if (e.key === 'Escape') closeGlass();
-      if (e.key === 'ArrowLeft') { prev(); stopGalleryAuto(); }
-      if (e.key === 'ArrowRight') { next(); stopGalleryAuto(); }
+      if (e.key === 'Escape')      closeModal();
+      if (e.key === 'ArrowLeft')  { gPrev(); stopGAuto(); }
+      if (e.key === 'ArrowRight') { gNext(); stopGAuto(); }
     }
   });
 }
