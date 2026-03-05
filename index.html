@@ -294,33 +294,41 @@
 </section>
 
 <!-- ============== GLASS MODAL (with Gallery) ============== -->
+<!-- ============== GLASS MODAL — paste this replacing your existing modal div ============== -->
 <div id="projectGlassModal" hidden>
   <div class="pgm-backdrop"></div>
   <div class="pgm-card" role="dialog" aria-modal="true" aria-labelledby="pgmTitle">
     <button class="pgm-close" aria-label="Close">✕</button>
 
+    <!-- BIG IMAGE CAROUSEL — full width at top -->
     <div class="pgm-media">
-      <img id="pgmImg" alt="" />
-      <div class="pgm-noimg">No image</div>
+      <!-- .pgm-img-wrap is injected by JS -->
+      <div class="pgm-noimg">No preview available</div>
       <button class="pgm-mnav prev" aria-label="Previous image">‹</button>
       <button class="pgm-mnav next" aria-label="Next image">›</button>
+      <div class="pgm-img-dots"></div>
+      <div class="pgm-counter"></div>
+      <div class="pgm-media-gradient"></div>
     </div>
 
+    <!-- THUMBNAIL STRIP -->
+    <div class="pgm-thumbs" id="pgmThumbs" aria-label="Gallery thumbnails"></div>
+
+    <!-- TEXT BODY -->
     <div class="pgm-body">
       <h3 id="pgmTitle"></h3>
       <p id="pgmDesc"></p>
 
       <div class="pgm-tech" id="pgmTech"></div>
       <div class="pgm-sep"></div>
-
       <ul class="pgm-features" id="pgmFeat"></ul>
-      <div class="pgm-thumbs" id="pgmThumbs" aria-label="Gallery thumbnails"></div>
 
       <div class="pgm-actions">
         <a id="pgmDemo" class="pgm-btn" target="_blank" rel="noopener">Live Demo</a>
-        <a id="pgmCode" class="pgm-btn" target="_blank" rel="noopener">Source Code</a>
+        <a id="pgmCode" class="pgm-btn" target="_blank" rel="noopener">GitHub</a>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -395,6 +403,7 @@
 
 </body>
 </html>
+
 
 
 
